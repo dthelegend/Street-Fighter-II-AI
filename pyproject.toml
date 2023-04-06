@@ -7,11 +7,9 @@ readme = "README.md"
 packages = [{include = "street_fighter_ii_ai"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-torch = "^2.0.0"
+python = "^3.11"
 gymnasium = "^0.28.1"
-gym-retro = "^0.8.0"
-
+cmake = "^3.26.1"
 
 [build-system]
 requires = ["poetry-core"]
