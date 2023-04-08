@@ -6,10 +6,20 @@ authors = ["dthelegend <wampamba.daudi@gmail.com>"]
 readme = "README.md"
 packages = [{include = "street_fighter_ii_ai"}]
 
+[tool.poetry.scripts]
+main = "street_fighter_ii_ai.main:main"
+
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 gymnasium = "^0.28.1"
 cmake = "^3.26.1"
+gym-retro = {git = "https://github.com/MatPoliquin/stable-retro.git"}
+torch = [
+    {url = "https://download.pytorch.org/whl/cu118/torch-2.0.0%2Bcu118-cp310-cp310-linux_x86_64.whl", markers = "sys_platform == 'linux'"}
+]
+torchvision = [
+    {url = "https://download.pytorch.org/whl/cu118/torchvision-0.15.1%2Bcu118-cp310-cp310-linux_x86_64.whl", markers = "sys_platform == 'linux'"}
+]
 
 [build-system]
 requires = ["poetry-core"]
