@@ -5,7 +5,7 @@ import torch
 def main():
     arena = Arena(mode=ArenaMode.TRAIN)
 
-    arena.set_player1(DQNFighter(obs_shape=arena.state.shape, action_space=arena.env.action_space))
+    arena.set_player1(DQNFighter(obs_shape=arena.state.shape, action_space=arena.env.action_space, burnin=0))
         
     if torch.cuda.is_available():
         num_episodes = 600

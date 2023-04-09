@@ -17,7 +17,7 @@ class ResizeObservation(ObservationWrapper):
         self.observation_space = Box(low=0, high=255, shape=obs_shape)
 
     def observation(self, observation):
-        transforms = T.Compose([T.Resize(self.shape), T.Normalize(0, 255)])
+        transforms = T.Compose([T.Resize(self.shape, antialias=False), T.Normalize(0, 255)])
 
         observation = transforms(observation)
         return observation #.squeeze(0)

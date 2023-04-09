@@ -3,7 +3,6 @@ from street_fighter_ii_ai.shared.wrappers.grey_scale_observation import GrayScal
 from street_fighter_ii_ai.shared.wrappers.retro_output_to_torch_image_observation import RetroOutputToTorchImageObservation
 from street_fighter_ii_ai.shared.wrappers.resize_observation import ResizeObservation
 from enum import IntEnum
-import torch
 from street_fighter_ii_ai.shared.abc.fighter import Fighter
 
 class ArenaMode(IntEnum):
@@ -16,7 +15,7 @@ class Arena():
 
         self.env = RetroOutputToTorchImageObservation(self.env)
         self.env = GrayScaleObservation(self.env)
-        self.env = ResizeObservation(self.env, shape=196)
+        self.env = ResizeObservation(self.env, shape=84)
         
         self.mode = mode
         self.reset()
