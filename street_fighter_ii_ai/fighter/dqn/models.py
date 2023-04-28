@@ -51,10 +51,12 @@ class DoubleDuelingDeepQNetwork(tf.keras.Model):
         return self.online(input_tensor)
 
     def calculate_td_estimate(self, states, actions):
-            current_online_Q = self(states, network=self.ONLINE)
-            return tf.gather(current_online_Q, actions, batch_dims=1)
+        actions = tf.cast(actions, dtype=tf.int32)
+        current_online_Q = self(states, network=self.ONLINE)
+        return tf.gather(current_online_Q, actions, batch_dims=1)
 
     def calculate_td_target(self, next_states, rewards, dones):
+        dones = tf.cast(dones, dtype=tf.float32)
         next_online_Q = self(next_states, network=self.ONLINE)
         best_actions = tf.math.argmax(next_online_Q, axis=1)
         
@@ -65,8 +67,6 @@ class DoubleDuelingDeepQNetwork(tf.keras.Model):
     @tf.function
     def train_step(self, data):
         states, actions, next_states, rewards, dones = data[0]
-        actions = tf.cast(actions, dtype=tf.int32)
-        dones = tf.cast(dones, dtype=tf.float32)
 
         with tf.GradientTape() as tape:
             # Calculate the TD estimate and TD target

@@ -2,7 +2,6 @@ from street_fighter_ii_ai.fighter.dqn.replay_memory import PrioritisedExperience
 from street_fighter_ii_ai.fighter.dqn.models import DoubleDuelingDeepQNetwork as DDDQN
 from street_fighter_ii_ai.fighter.fighter import Fighter
 import tensorflow as tf
-import math
 import numpy as np
 
 class DDDQNFighterSettings:
@@ -79,9 +78,9 @@ class DDDQNFighter(Fighter):
             self.memory.clear()
 
     def cache(self, state, action, next_state, reward, done):
-        td_estimate = self.memory.calculate_td_estimate(self, state, action)
-        td_target = self.memory.calculate_td_target(self, next_state, reward, done)
-        td_error = math.abs(td_target - td_estimate)
+        td_estimate = tf.squeeze(self.model.calculate_td_estimate(tf.expand_dims(state, axis = 0), tf.expand_dims(action, axis = 0)))
+        td_target = tf.squeeze(self.model.calculate_td_target(tf.expand_dims(next_state, axis = 0), tf.expand_dims(reward, axis = 0), tf.expand_dims(done, axis = 0)))
+        td_error = abs(td_target - td_estimate)
 
         self.memory.push(td_error, state, action, next_state, reward, done)
     
