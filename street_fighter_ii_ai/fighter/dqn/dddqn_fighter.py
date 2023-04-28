@@ -1,5 +1,5 @@
 from street_fighter_ii_ai.fighter.dqn.replay_memory import ReplayMemory
-from street_fighter_ii_ai.fighter.dqn.ddqn import DoubleDuelingDeepQNetwork as DDDQN
+from street_fighter_ii_ai.fighter.dqn.models import DoubleDuelingDeepQNetwork as DDDQN
 from street_fighter_ii_ai.fighter.fighter import Fighter
 import tensorflow as tf
 import pathlib
@@ -17,8 +17,7 @@ class DDDQNFighterSettings:
     exploration_rate_decay = 0.99999975
     exploration_rate_min = 0.1
 
-    # burnin = 1e4
-    burnin = 0
+    burnin = 1e4
     sync_every = 1e4
     learn_every = 3
 
@@ -32,9 +31,6 @@ class DDDQNFighter(Fighter):
 
         if self.settings.weights is not None:
             self.model.load_weights(self.settings.weights)
-        else:
-            self.model.build((None, 84, 84, 1))
-        
 
         self.model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.settings.learning_rate), loss=tf.keras.losses.Huber(), jit_compile=True)
 
@@ -58,6 +54,7 @@ class DDDQNFighter(Fighter):
         self.exploration_rate = max(self.settings.exploration_rate_min, self.exploration_rate)
 
         if self.sync_counter > self.settings.sync_every:
+            print("Syncing target network")
             self.sync_Q_target()
             self.sync_counter = 0
         else:
@@ -70,12 +67,13 @@ class DDDQNFighter(Fighter):
             self.learn_counter = 0
         else:
             self.learn_counter += 1
-        
 
         return output
 
     def reset(self, clear_memory=False):
-        # self.steps = 0
+        self.sync_counter = 0
+        self.learn_counter = 0
+        self.burnin = self.settings.burnin
         if(clear_memory):
             self.memory.clear()
 
@@ -90,3 +88,4 @@ class DDDQNFighter(Fighter):
 
     def save(self, save_path):
         self.model.save(save_path, save_format="tf")
+        print("Saved model to {}".format(save_path))

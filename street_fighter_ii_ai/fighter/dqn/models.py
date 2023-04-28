@@ -1,5 +1,5 @@
 import tensorflow as tf
-import numpy as np
+from enum import IntEnum
 
 class DuelingDeepQNetwork(tf.keras.Model):
     def __init__(self, num_actions: int) -> None:
@@ -30,35 +30,41 @@ class DuelingDeepQNetwork(tf.keras.Model):
         return Q
 
 class DoubleDuelingDeepQNetwork(tf.keras.Model):
+    ONLINE = 0
+    TARGET = 1
+
     def __init__(self, num_actions: int) -> None:
         super().__init__()
         
         self.online = DuelingDeepQNetwork(num_actions)
-        self.target = DuelingDeepQNetwork(num_actions)
+        self.target = tf.keras.models.clone_model(self.online)
         
         self.gamma = 0.9
 
     @tf.function
-    def call(self, input_tensor):
+    def call(self, input_tensor, network = None):
+        if network == self.TARGET:
+            return self.target(input_tensor)
         return self.online(input_tensor)
 
     def calculate_td_estimate(self, states, actions):
-            current_online_Q = self.online(states)
-            return current_online_Q[:,actions]
+            current_online_Q = self(states, network=self.ONLINE)
+            return tf.gather(current_online_Q, actions, batch_dims=1)
 
     def calculate_td_target(self, next_states, rewards, dones):
-        next_online_Q = self.online(next_states)
+        next_online_Q = self(next_states, network=self.ONLINE)
         best_actions = tf.math.argmax(next_online_Q, axis=1)
         
-        next_target_Q = self.target(next_states)
+        next_target_Q = self(next_states, network=self.TARGET)
 
-        return rewards + self.gamma * tf.math.multiply(next_target_Q[:,best_actions], (1 - tf.cast(dones, tf.float32)))
+        return rewards + self.gamma * tf.math.multiply(tf.gather(next_target_Q, best_actions, batch_dims=1), (1 - dones))
 
     @tf.function
     def train_step(self, data):
 
         states, actions, next_states, rewards, dones = data[0]
-        actions = tf.get_static_value(actions)
+        actions = tf.cast(actions, dtype=tf.int32)
+        dones = tf.cast(dones, dtype=tf.float32)
 
         with tf.GradientTape() as tape:
             # Calculate the TD estimate and TD target
@@ -66,12 +72,15 @@ class DoubleDuelingDeepQNetwork(tf.keras.Model):
             td_target = self.calculate_td_target(next_states, rewards, dones)
 
             # Calculate loss
-            loss = self.compute_loss(td_target, td_estimate, regularization_losses=self.losses)
+            loss = self.compiled_loss(td_target, td_estimate, regularization_losses=self.losses)
         grads = tape.gradient(loss, self.online.trainable_variables)
-        self.online.optimizer.apply_gradients(zip(grads, self.online.trainable_variables))
+        self.optimizer.apply_gradients(zip(grads, self.online.trainable_variables))
         self.compiled_metrics.update_state(td_target, td_estimate)
 
         return {m.name: m.result() for m in self.metrics}
+    
+    def get_config(self):
+        return super().get_config()
 
     def sync(self):
         self.target.set_weights(self.online.get_weights())

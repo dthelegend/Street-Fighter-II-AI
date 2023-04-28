@@ -7,8 +7,6 @@ CUSTOM_INTEGRATIONS_PATH = ROOT_DIR / "custom_integrations"
 print("Loading custom integrations from " + str(CUSTOM_INTEGRATIONS_PATH) + "...")
 retro.data.Integrations.add_custom_path(CUSTOM_INTEGRATIONS_PATH)
 
-print("StreetFighterIISpecialChampionEdition-Genesis" in retro.data.list_games(inttype=retro.data.Integrations.ALL))
-
 def create_environment(state = retro.State.DEFAULT):
     env = retro.make("StreetFighterIISpecialChampionEdition-Genesis", inttype=retro.data.Integrations.ALL, state = state)
 

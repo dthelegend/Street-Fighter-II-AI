@@ -1,3 +1,6 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1' # Disable Tensorflow logging
+
 from street_fighter_ii_ai.arena.training_arena import TrainingArena, TrainingMode
 from street_fighter_ii_ai.fighter.dqn.dddqn_fighter import DDDQNFighter
 import pathlib

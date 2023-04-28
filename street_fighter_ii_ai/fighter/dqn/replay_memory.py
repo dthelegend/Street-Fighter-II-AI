@@ -24,7 +24,6 @@ class ReplayMemory():
 
     def push(self, *args):
         """Save a transition"""
-        
         self.states[self.index], self.actions[self.index], self.next_states[self.index], self.rewards[self.index], self.dones[self.index] = args
 
         self.index = (self.index + 1) % self.max_size
