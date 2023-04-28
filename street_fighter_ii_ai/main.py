@@ -25,7 +25,7 @@ def main():
                 arena.reset()
                 if current_episode % SAVE_EVERY == 0:
                     player.save(SAVE_PATH)
-        except Exception as e:
+        except (KeyboardInterrupt, Exception) as e:
             player.save(SAVE_PATH)
             if isinstance(e, KeyboardInterrupt):
                 print("Training interrupted by user")

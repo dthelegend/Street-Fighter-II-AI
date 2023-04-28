@@ -15,8 +15,8 @@ class PrioritisedExperienceReplayMemory():
         self.current_size = 0
         self.index = 0
         self.max_size = capacity
-        self.alpha = self.alpha
-        self.epsilon = self.epsilon
+        self.alpha = alpha
+        self.epsilon = epsilon
     
     @property
     def data(self):
