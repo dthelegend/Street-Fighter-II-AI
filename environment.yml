@@ -1,4 +1,4 @@
-name: /home/daudi/Code/Street-Fighter-II-AI/.conda
+name: street-fighter
 channels:
   - conda-forge
   - defaults
@@ -26,15 +26,4 @@ dependencies:
   - wheel=0.38.4=py310h06a4308_0
   - xz=5.2.10=h5eee18b_1
   - zlib=1.2.13=h5eee18b_0
-  - pip:
-      - cloudpickle==2.2.1
-      - cmake==3.26.1
-      - farama-notifications==0.0.4
-      - gym-retro==0.8.0.dev88+gc506c1e6
-      - gymnasium==0.28.1
-      - jax-jumpy==1.0.0
-      - numpy==1.24.2
-      - pyglet==1.5.27
-      - street-fighter-ii-ai==0.1.0
-      - typing-extensions==4.5.0
 prefix: /home/daudi/Code/Street-Fighter-II-AI/.conda
