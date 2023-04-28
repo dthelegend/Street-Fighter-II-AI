@@ -1,15 +1,15 @@
-from street_fighter_ii_ai.fighter.dqn.replay_memory import ReplayMemory
+from street_fighter_ii_ai.fighter.dqn.replay_memory import PrioritisedExperienceReplayMemory
 from street_fighter_ii_ai.fighter.dqn.models import DoubleDuelingDeepQNetwork as DDDQN
 from street_fighter_ii_ai.fighter.fighter import Fighter
 import tensorflow as tf
-import pathlib
-import time
+import math
 import numpy as np
 
 class DDDQNFighterSettings:
     learning_rate = 0.00025
     batch_size = 32
 
+    observation_shape = (84, 84, 1)
     action_space_size = 12
 
     weights = None
@@ -27,16 +27,16 @@ class DDDQNFighter(Fighter):
     def __init__(self, settings=DDDQNFighterSettings()):
         self.settings = settings
 
-        self.model = DDDQN(self.settings.action_space_size)
+        self.model = DDDQN(self.settings.observation_shape, self.settings.action_space_size)
 
         if self.settings.weights is not None:
             self.model.load_weights(self.settings.weights)
-
+        
         self.model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.settings.learning_rate), loss=tf.keras.losses.Huber(), jit_compile=True)
 
         self.exploration_rate = 1.0
 
-        self.memory = ReplayMemory(self.settings.memory_size)
+        self.memory = PrioritisedExperienceReplayMemory(self.settings.memory_size)
 
         self.sync_counter = 0
         self.learn_counter = 0
@@ -52,21 +52,22 @@ class DDDQNFighter(Fighter):
         
         self.exploration_rate *= self.settings.exploration_rate_decay
         self.exploration_rate = max(self.settings.exploration_rate_min, self.exploration_rate)
-
-        if self.sync_counter > self.settings.sync_every:
-            print("Syncing target network")
-            self.sync_Q_target()
-            self.sync_counter = 0
-        else:
-            self.sync_counter += 1
         
         if self.burnin > 0:
             self.burnin -= 1
-        elif self.learn_counter > self.settings.learn_every:
-            self.learn()
-            self.learn_counter = 0
         else:
-            self.learn_counter += 1
+            if self.learn_counter > self.settings.learn_every:
+                self.learn()
+                self.learn_counter = 0
+            else:
+                self.learn_counter += 1
+
+            if self.sync_counter > self.settings.sync_every:
+                print("Syncing target network")
+                self.model.sync_target()
+                self.sync_counter = 0
+            else:
+                self.sync_counter += 1
 
         return output
 
@@ -78,7 +79,11 @@ class DDDQNFighter(Fighter):
             self.memory.clear()
 
     def cache(self, state, action, next_state, reward, done):
-        self.memory.push(state, action, next_state, reward, done)
+        td_estimate = self.memory.calculate_td_estimate(self, state, action)
+        td_target = self.memory.calculate_td_target(self, next_state, reward, done)
+        td_error = math.abs(td_target - td_estimate)
+
+        self.memory.push(td_error, state, action, next_state, reward, done)
     
     def learn(self):
         if(len(self.memory) < self.settings.batch_size):
@@ -86,6 +91,10 @@ class DDDQNFighter(Fighter):
 
         self.model.train_on_batch(self.memory.sample(self.settings.batch_size))
 
+    def load(self, load_path):
+        self.model.load_weights(load_path)
+        print("Loaded model from {}".format(load_path))
+
     def save(self, save_path):
-        self.model.save(save_path, save_format="tf")
+        self.model.save_weights(save_path)
         print("Saved model to {}".format(save_path))

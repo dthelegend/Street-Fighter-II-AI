@@ -2,10 +2,11 @@ import tensorflow as tf
 from enum import IntEnum
 
 class DuelingDeepQNetwork(tf.keras.Model):
-    def __init__(self, num_actions: int) -> None:
+    def __init__(self, observation_shape: tuple, num_actions: int) -> None:
         super().__init__()
 
         self.net = tf.keras.models.Sequential([
+            tf.keras.layers.InputLayer(input_shape=observation_shape),
             tf.keras.layers.Conv2D(32, 8, 4, activation="relu"),
             tf.keras.layers.Conv2D(64, 4, 2, activation="relu"),
             tf.keras.layers.Conv2D(64, 3, 1, activation="relu"),
@@ -33,13 +34,15 @@ class DoubleDuelingDeepQNetwork(tf.keras.Model):
     ONLINE = 0
     TARGET = 1
 
-    def __init__(self, num_actions: int) -> None:
+    def __init__(self, observation_shape: tuple, num_actions: int, gamma = 0.9) -> None:
         super().__init__()
+
+        self.observation_shape = observation_shape
+        self.num_actions = num_actions
+        self.gamma = gamma
         
-        self.online = DuelingDeepQNetwork(num_actions)
-        self.target = tf.keras.models.clone_model(self.online)
-        
-        self.gamma = 0.9
+        self.online = DuelingDeepQNetwork(observation_shape, num_actions)
+        self.target = DuelingDeepQNetwork(observation_shape, num_actions)
 
     @tf.function
     def call(self, input_tensor, network = None):
@@ -61,7 +64,6 @@ class DoubleDuelingDeepQNetwork(tf.keras.Model):
 
     @tf.function
     def train_step(self, data):
-
         states, actions, next_states, rewards, dones = data[0]
         actions = tf.cast(actions, dtype=tf.int32)
         dones = tf.cast(dones, dtype=tf.float32)
@@ -80,7 +82,11 @@ class DoubleDuelingDeepQNetwork(tf.keras.Model):
         return {m.name: m.result() for m in self.metrics}
     
     def get_config(self):
-        return super().get_config()
+        return {"num_actions": self.num_actions, "gamma": self.gamma}
 
-    def sync(self):
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+    def sync_target(self):
         self.target.set_weights(self.online.get_weights())
