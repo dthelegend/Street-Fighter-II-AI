@@ -1,22 +1,26 @@
-from street_fighter_ii_ai.shared.arena import Arena, ArenaMode
-from street_fighter_ii_ai.models.dqn.dqn_fighter import DQNFighter
-import torch
+from street_fighter_ii_ai.arena.training_arena import TrainingArena, TrainingMode
+from street_fighter_ii_ai.fighter.dqn.dddqn_fighter import DDDQNFighter
+import pathlib
+
+NUM_EPISODES = 1000
+SAVE_EVERY = 100
+
+SAVE_PATH = pathlib.Path("nets") / "dddqn.tf"
 
 def main():
-    arena = Arena(mode=ArenaMode.TRAIN)
+    player = DDDQNFighter()
 
-    arena.set_player1(DQNFighter(obs_shape=arena.state.shape, action_space=arena.env.action_space, burnin=0))
-        
-    if torch.cuda.is_available():
-        num_episodes = 600
-    else:
-        num_episodes = 50
-
-    while num_episodes > 0:
-        if arena.step() is None:
-            arena.reset()
-            num_episodes -= 1
-            arena.save()
+    with TrainingArena(TrainingMode.RYU, player) as arena:
+        try:
+            for current_episode in range(NUM_EPISODES):
+                while arena.step() is not None:
+                    pass
+                arena.reset()
+                if current_episode % SAVE_EVERY == 0:
+                    player.save(SAVE_PATH)
+        except KeyboardInterrupt:
+            player.save(SAVE_PATH)
+            exit(0)
 
 if __name__=="__main__":
     main()

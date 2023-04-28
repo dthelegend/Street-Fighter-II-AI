@@ -1,0 +1,40 @@
+name: /home/daudi/Code/Street-Fighter-II-AI/.conda
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1=conda_forge
+  - _openmp_mutex=4.5=2_kmp_llvm
+  - bzip2=1.0.8=h7b6447c_0
+  - ca-certificates=2022.12.7=ha878542_0
+  - cudatoolkit=11.8.0=h37601d7_11
+  - ld_impl_linux-64=2.38=h1181459_1
+  - libffi=3.4.2=h6a678d5_6
+  - libgcc-ng=12.2.0=h65d4601_19
+  - libstdcxx-ng=12.2.0=h46fd767_19
+  - libuuid=1.41.5=h5eee18b_0
+  - llvm-openmp=14.0.6=h9e868ea_0
+  - ncurses=6.4=h6a678d5_0
+  - openssl=1.1.1t=h0b41bf4_0
+  - pip=23.0.1=py310h06a4308_0
+  - python=3.10.11=h7a1cb2a_2
+  - readline=8.2=h5eee18b_0
+  - setuptools=66.0.0=py310h06a4308_0
+  - sqlite=3.41.2=h5eee18b_0
+  - tk=8.6.12=h1ccaba5_0
+  - tzdata=2023c=h04d1e81_0
+  - wheel=0.38.4=py310h06a4308_0
+  - xz=5.2.10=h5eee18b_1
+  - zlib=1.2.13=h5eee18b_0
+  - pip:
+      - cloudpickle==2.2.1
+      - cmake==3.26.1
+      - farama-notifications==0.0.4
+      - gym-retro==0.8.0.dev88+gc506c1e6
+      - gymnasium==0.28.1
+      - jax-jumpy==1.0.0
+      - numpy==1.24.2
+      - pyglet==1.5.27
+      - street-fighter-ii-ai==0.1.0
+      - typing-extensions==4.5.0
+prefix: /home/daudi/Code/Street-Fighter-II-AI/.conda

@@ -1,7 +1,7 @@
 from gymnasium import ObservationWrapper
 from gymnasium.spaces import Box
+import tensorflow as tf
 import numpy as np
-import torchvision.transforms as T
 
 class ResizeObservation(ObservationWrapper):
 
@@ -14,11 +14,10 @@ class ResizeObservation(ObservationWrapper):
             self.shape = tuple(shape)
         
         obs_shape = self.shape + self.observation_space.shape[2:]
-        self.observation_space = Box(low=0, high=255, shape=obs_shape)
+        self.observation_space = Box(low=0, high=1, shape=obs_shape, dtype=np.float32)
 
     def observation(self, observation):
-        transforms = T.Compose([T.Resize(self.shape, antialias=False), T.Normalize(0, 255)])
-
-        observation = transforms(observation)
+        observation = tf.image.resize(observation, self.shape, antialias=False)
+        observation = observation / 255.0
         return observation #.squeeze(0)
 

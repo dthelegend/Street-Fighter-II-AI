@@ -1,6 +1,10 @@
 from abc import ABC, abstractmethod
+import pathlib
 
 class Fighter(ABC):
+    @abstractmethod
+    def __init__(self, **kwargs):
+        raise NotImplementedError()
 
     @abstractmethod
     def act(self, state):
@@ -15,5 +19,5 @@ class Fighter(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def save(self):
+    def save(self, save_path):
         raise NotImplementedError()
