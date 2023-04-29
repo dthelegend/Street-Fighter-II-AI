@@ -26,10 +26,9 @@ def main():
                     player.save(SAVE_PATH)
         except (KeyboardInterrupt, Exception) as e:
             player.save(SAVE_PATH)
-            if isinstance(e, KeyboardInterrupt):
-                print("Training interrupted by user")
-                exit(0)
-            raise e
+            if not isinstance(e, KeyboardInterrupt):
+                raise e
+            print("Training interrupted by user")
 
 if __name__=="__main__":
     main()
