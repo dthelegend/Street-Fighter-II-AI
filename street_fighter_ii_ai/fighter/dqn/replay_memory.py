@@ -11,6 +11,7 @@ class PrioritisedExperienceReplayMemory():
         self.dones = np.zeros(shape=(capacity,), dtype=np.bool)
 
         self.alpha_errors = np.zeros(shape=(capacity,), dtype=np.float64)
+        self.rolling_alpha_errors_sum = 0
 
         self.current_size = 0
         self.index = 0
@@ -23,12 +24,14 @@ class PrioritisedExperienceReplayMemory():
         return (self.states[:self.current_size], self.actions[:self.current_size], self.next_states[:self.current_size], self.rewards[:self.current_size], self.dones[:self.current_size])
 
     def sample(self, batch_size):
-        indices = np.random.choice(self.max_size, batch_size, p=self.alpha_errors / sum(self.alpha_errors), replace=False)
+        indices = np.random.choice(self.max_size, batch_size, p=self.alpha_errors / self.rolling_alpha_errors_sum, replace=False)
         return (self.states[indices], self.actions[indices], self.next_states[indices], self.rewards[indices], self.dones[indices])
 
     def push(self, *args):
         td_error, self.states[self.index], self.actions[self.index], self.next_states[self.index], self.rewards[self.index], self.dones[self.index] = args
-        self.alpha_errors[self.index] = td_error ** self.alpha + self.epsilon
+        alpha_error = td_error ** self.alpha + self.epsilon
+        self.rolling_alpha_errors_sum += alpha_error - self.alpha_errors[self.index]
+        self.alpha_errors[self.index] = alpha_error
 
         self.index = (self.index + 1) % self.max_size
         self.current_size = min(self.current_size + 1, self.max_size)

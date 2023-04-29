@@ -4,10 +4,9 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '1' # Disable Tensorflow logging
 from street_fighter_ii_ai.arena.training_arena import TrainingArena, TrainingMode
 from street_fighter_ii_ai.fighter.dqn.dddqn_fighter import DDDQNFighter
 import pathlib
-import tensorflow as tf
 
-NUM_EPISODES = 1000
-SAVE_EVERY = 100
+NUM_EPISODES = 10000
+SAVE_EVERY = 10
 
 SAVE_PATH = pathlib.Path("nets") / "dddqn.ckpt"
 

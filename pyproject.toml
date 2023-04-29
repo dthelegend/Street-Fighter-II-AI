@@ -16,6 +16,8 @@ cmake = "^3.26.1"
 gym-retro = {git = "https://github.com/MatPoliquin/stable-retro.git"}
 nvidia-cudnn-cu11 = "8.6.0.163"
 tensorflow = {version = "^2.12.0", extras = ["gpu"]}
+pyopengl = "^3.1.6"
+pyopengl-accelerate = "^3.1.6"
 
 [build-system]
 requires = ["poetry-core"]

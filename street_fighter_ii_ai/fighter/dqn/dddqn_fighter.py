@@ -20,7 +20,7 @@ class DDDQNFighterSettings:
     sync_every = 1e4
     learn_every = 3
 
-    memory_size = int(1e5)
+    memory_size = 100000
 
 class DDDQNFighter(Fighter):
     def __init__(self, settings=DDDQNFighterSettings()):
