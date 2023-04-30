@@ -10,7 +10,7 @@
         },
         "enemy_matches_won": {
             "address": 16745559,
-            "type": ">u4"
+            "type": "|u1"
         },
         "health": {
             "address": 16744514,
@@ -23,6 +23,34 @@
         "score": {
             "address": 16744936,
             "type": ">d4"
+        },
+        "match_timer": {
+            "address": 16750378,
+            "type": ">d1"
+        },
+        "x": {
+            "address": 16744454,
+            "type": ">u2"
+        },
+        "y": {
+            "address": 16744459,
+            "type": "|u1"
+        },
+        "enemy_x": {
+            "address": 16745094,
+            "type": ">u2"
+        },
+        "enemy_y": {
+            "address": 16745099,
+            "type": "|u1"
+        },
+        "button": {
+            "address": 16744926,
+            "type": "|u1"
+        },
+        "enemy_button": {
+            "address": 16745566,
+            "type": "|u1"
         }
     }
 }

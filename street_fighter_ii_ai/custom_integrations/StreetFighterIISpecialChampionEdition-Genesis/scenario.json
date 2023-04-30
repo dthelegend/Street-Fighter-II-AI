@@ -1,30 +1,18 @@
 {
     "done": {
-        "variables": {
-            "continuetimer": {
-                "op": "equal",
-                "reference": 10
-            }
+      "variables": {
+        "continuetimer": {
+          "op": "equal",
+          "reference": 10
         }
+      }
     },
     "reward": {
-        "variables": {
-            "score": {
-                "reward": 1.0
-            },
-            "health": {
-                "penalty": 50.0
-            },
-            "enemy_health": {
-                "reward": 50.0
-            },
-            "enemy_matches_won": {
-                "penalty": 10000.0
-            },
-            "matches_won": {
-                "reward": 10000.0
-            }
+      "variables": {
+        "score": {
+          "reward": 1.0
         }
+      }
     },
     "crop": [0, 16, 256, 200]
 }
