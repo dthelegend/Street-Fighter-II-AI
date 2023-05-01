@@ -44,12 +44,12 @@
             "address": 16745099,
             "type": "|u1"
         },
-        "button": {
-            "address": 16744926,
+        "character": {
+            "address": 16744923,
             "type": "|u1"
         },
-        "enemy_button": {
-            "address": 16745566,
+        "enemy_character": {
+            "address": 16745563,
             "type": "|u1"
         }
     }

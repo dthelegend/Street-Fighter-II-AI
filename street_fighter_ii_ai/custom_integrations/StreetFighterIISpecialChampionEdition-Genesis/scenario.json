@@ -9,8 +9,11 @@
     },
     "reward": {
       "variables": {
-        "score": {
+        "health": {
           "reward": 1.0
+        },
+        "enemy_health": {
+          "reward": -1.0
         }
       }
     },

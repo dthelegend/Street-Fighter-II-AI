@@ -1,5 +1,5 @@
 import retro
-from street_fighter_ii_ai.wrappers import RetroOutputToTFTensorObservation, GrayScaleObservation, ResizeObservation, DiscretisedAction
+from street_fighter_ii_ai.wrappers import RetroOutputToTFTensorObservation, GrayScaleObservation, ResizeObservation, StreetFighterDiscretisedAction
 from street_fighter_ii_ai import ROOT_DIR
 
 CUSTOM_INTEGRATIONS_PATH = ROOT_DIR / "custom_integrations"
@@ -13,6 +13,6 @@ def create_environment(state = retro.State.DEFAULT):
     env = RetroOutputToTFTensorObservation(env)
     env = GrayScaleObservation(env)
     env = ResizeObservation(env, shape=84)
-    env = DiscretisedAction(env)
+    env = StreetFighterDiscretisedAction(env)
 
     return env

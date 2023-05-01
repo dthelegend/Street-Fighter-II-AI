@@ -1,4 +1,4 @@
-from .discretised_action import DiscretisedAction
 from .gray_scale_observation import GrayScaleObservation
 from .retro_output_to_tf_tensor_image_observation import RetroOutputToTFTensorObservation
 from .resize_observation import ResizeObservation
+from .discretised_action import StreetFighterDiscretisedAction

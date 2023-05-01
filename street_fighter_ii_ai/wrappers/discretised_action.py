@@ -1,13 +1,26 @@
-from gymnasium import ActionWrapper#
-from gymnasium.spaces import Discrete
+import gymnasium as gym
 import numpy as np
 
-class DiscretisedAction(ActionWrapper):
-    def __init__(self, env):
-        super().__init__(env)
-        self.action_space = Discrete(env.action_space.n)
+class StreetFighterDiscretisedAction(gym.ActionWrapper):
+    """
+    Wrap a gym environment and make it use discrete actions.
 
-    def action(self, action):
-        action_binary = np.zeros(self.env.action_space.n)
-        action_binary[action] = 1
-        return action_binary
+    Use Street Fighter-specific discrete actions
+    """
+
+    def __init__(self, env, /, combos_set_one=[['LEFT'], ['RIGHT'], ['UP'], ['DOWN'], ['UP', 'RIGHT'], ['DOWN', 'RIGHT'], ['LEFT', 'DOWN'], ['LEFT', 'UP'], ['RIGHT', 'DOWN']], combo_set_two=[['A'], ['B'], ['C'], ['X'], ['Y'], ['Z']]):
+        super().__init__(env)
+        assert isinstance(env.action_space, gym.spaces.MultiBinary)
+        buttons = env.unwrapped.buttons
+        self._decode_discrete_action = []
+        for combo_one, combo_two in ((x, y) for x in [*combos_set_one, []] for y in [*combo_set_two, []]):
+            combo = combo_one + combo_two
+            arr = np.array([False] * env.action_space.n)
+            for button in combo:
+                arr[buttons.index(button)] = True
+            self._decode_discrete_action.append(arr)
+
+        self.action_space = gym.spaces.Discrete(len(self._decode_discrete_action))
+
+    def action(self, act):
+        return self._decode_discrete_action[act].copy()
