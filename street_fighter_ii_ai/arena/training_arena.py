@@ -2,12 +2,12 @@ import retro
 from enum import Enum
 from street_fighter_ii_ai.fighter.fighter import Fighter
 from street_fighter_ii_ai.arena.arena import Arena
-from street_fighter_ii_ai.utils import create_environment
+from street_fighter_ii_ai.utils import create_environment, ROOT_DIR
 
 GAME_NAME="StreetFighterIISpecialChampionEdition-Genesis"
+STATES_DIR = ROOT_DIR / "custom_integrations" / GAME_NAME
 
 class TrainingMode(Enum):
-    DEFAULT = retro.State.DEFAULT
     BLANKA = "blanka"
     CHUN_LI = "chun-li"
     DHALSIM = "dhalsim"
@@ -20,20 +20,24 @@ class TrainingMode(Enum):
     BISON = "bison"
     SAGAT = "sagat"
     VEGA = "vega"
+    DEFAULT = RYU
 
 class TrainingArena(Arena):
-    def __init__(self, mode: TrainingMode = TrainingMode.DEFAULT, player: Fighter = None):
+    def __init__(self, mode: TrainingMode = TrainingMode.DEFAULT, log_info=True):
         self.env = None
         self.mode = mode
         self.state = None
         self.info = None
-        self.player = player
+        self.player = None
     
     def reset(self):
         self.state, self.info = self.env.reset()
     
+    def set_player(self, player: Fighter):
+        self.player = player
+    
     def __enter__(self):
-        self.env = create_environment(self.mode.value)
+        self.env = create_environment(str(STATES_DIR / self.mode.value))
         self.reset()
         return self
 
@@ -41,7 +45,7 @@ class TrainingArena(Arena):
         self.env.close()
         self.env = None
 
-    def step(self, /, render=True):
+    def step(self):
         if(self.env is None):
             raise ValueError("No environment initialised. Please use in Context Manager")
 
@@ -52,11 +56,11 @@ class TrainingArena(Arena):
         self.player.cache(self.state, action, next_state, reward, terminated or truncated)
         
         self.state = next_state
-
-        if(render): 
-            self.env.render()
         
         if terminated or truncated:
             return None
 
         return self.state
+
+    def render(self): 
+        self.env.render()

@@ -82,7 +82,7 @@ class DoubleDuelingDeepQNetwork(tf.keras.Model):
         return {m.name: m.result() for m in self.metrics}
     
     def get_config(self):
-        return {"num_actions": self.num_actions, "gamma": self.gamma}
+        return {"observation_shape": self.observation_shape, "num_actions": self.num_actions, "gamma": self.gamma}
 
     @classmethod
     def from_config(cls, config):

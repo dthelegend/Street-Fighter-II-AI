@@ -1,17 +1,17 @@
 from street_fighter_ii_ai.fighter.replay_memory import PrioritisedExperienceReplayMemory
-from street_fighter_ii_ai.fighter.dqn.models import DoubleDuelingDeepQNetwork as DDDQN
 from street_fighter_ii_ai.fighter.fighter import Fighter
+from street_fighter_ii_ai.fighter.a2c.models import ActorCritic as A2C
 import tensorflow as tf
+import numpy as np
 from numpy.random import default_rng
 
-class DDDQNFighterSettings:
+class A2CFighterSettings:
     learning_rate = 0.00025
     batch_size = 32
-    
-    rng=default_rng()
 
     observation_shape = (84, 84, 1)
     action_space_size = 12
+    rng=default_rng()
 
     weights = None
 
@@ -19,16 +19,16 @@ class DDDQNFighterSettings:
     exploration_rate_min = 0.1
 
     burnin = 1e4
-    sync_every = 1e4
     learn_every = 3
 
     memory_size = 100000
 
-class DDDQNFighter(Fighter):
-    def __init__(self, settings=DDDQNFighterSettings()):
+class A2CFighter(Fighter):
+
+    def __init__(self, settings=A2CFighterSettings()):
         self.settings = settings
 
-        self.model = DDDQN(self.settings.observation_shape, self.settings.action_space_size)
+        self.model = A2C(self.settings.observation_shape, self.settings.action_space_size)
 
         if self.settings.weights is not None:
             self.model.load_weights(self.settings.weights)
@@ -41,7 +41,6 @@ class DDDQNFighter(Fighter):
 
         self.metrics = None
 
-        self.sync_counter = 0
         self.learn_counter = 0
         self.burnin = self.settings.burnin
 
@@ -49,7 +48,7 @@ class DDDQNFighter(Fighter):
         
         if self.settings.rng.random() >= self.exploration_rate:
             action_values = self.model(tf.expand_dims(state, axis=0))
-            output = tf.math.argmax(tf.squeeze(action_values, axis=0)).numpy()
+            output = self.settings.rng.choice(self.settings.action_space_size, p=tf.squeeze(action_values, axis=0))
         else:
             output = self.settings.rng.integers(self.settings.action_space_size)
         
@@ -65,15 +64,8 @@ class DDDQNFighter(Fighter):
             else:
                 self.learn_counter += 1
 
-            if self.sync_counter > self.settings.sync_every:
-                print("Syncing target network")
-                self.model.sync_target()
-                self.sync_counter = 0
-            else:
-                self.sync_counter += 1
-
         return output
-
+    
     def reset(self, clear_memory=False):
         self.sync_counter = 0
         self.learn_counter = 0

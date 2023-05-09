@@ -7,13 +7,16 @@ conda env create -f environment.yml
 ```
 
 ```bash
+python3 -m retro.import ./roms
+```
+
+```bash
 poetry install
 ```
 
 ```bash
 python3 -m retro.import roms/
 ```
-
 
 ## Notes
 
