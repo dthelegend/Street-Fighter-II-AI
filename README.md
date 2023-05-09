@@ -14,6 +14,10 @@ poetry install
 python3 -m retro.import roms/
 ```
 
+# Run
+```bash
+poetry run main
+```
 
 ## Notes
 
