@@ -18,14 +18,11 @@ poetry install
 python3 -m retro.import roms/
 ```
 
-<<<<<<< HEAD
-=======
 # Run
 ```bash
 poetry run main
 ```
 
->>>>>>> cd8fa78bee72501f13887941937de3108a4316f0
 ## Notes
 
 Controls are mapped to the buttons using a binary format
