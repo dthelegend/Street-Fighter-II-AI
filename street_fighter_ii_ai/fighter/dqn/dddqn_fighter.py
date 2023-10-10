@@ -1,3 +1,4 @@
+import numpy as np
 from street_fighter_ii_ai.fighter.replay_memory import PrioritisedExperienceReplayMemory
 from street_fighter_ii_ai.fighter.dqn.models import DoubleDuelingDeepQNetwork as DDDQN
 from street_fighter_ii_ai.fighter.fighter import Fighter
@@ -31,6 +32,7 @@ class DDDQNFighter(Fighter):
         self.model = DDDQN(self.settings.observation_shape, self.settings.action_space_size)
 
         if self.settings.weights is not None:
+            self.model(np.zeros((1,) + self.settings.observation_shape))
             self.model.load_weights(self.settings.weights)
         
         self.model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=self.settings.learning_rate), loss=tf.keras.losses.Huber(), jit_compile=True)

@@ -13,7 +13,7 @@ class StreetFighterDiscretisedAction(gym.ActionWrapper):
         assert isinstance(env.action_space, gym.spaces.MultiBinary)
         buttons = env.unwrapped.buttons
         self._decode_discrete_action = []
-        for combo_one, combo_two in ((x, y) for x in [*combos_set_one, []] for y in [*combo_set_two, []]):
+        for combo_one, combo_two in ((x, y) for x in [[], *combos_set_one] for y in [[], *combo_set_two]):
             combo = combo_one + combo_two
             arr = np.array([False] * env.action_space.n)
             for button in combo:

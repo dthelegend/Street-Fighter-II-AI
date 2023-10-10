@@ -1,4 +1,3 @@
-import retro
 from enum import Enum
 from street_fighter_ii_ai.fighter.fighter import Fighter
 from street_fighter_ii_ai.arena.arena import Arena
@@ -9,11 +8,11 @@ STATES_DIR = ROOT_DIR / "custom_integrations" / GAME_NAME
 
 class TrainingMode(Enum):
     BLANKA = "blanka"
-    CHUN_LI = "chun-li"
+    CHUN_LI = "Champion.Level1.ChunLiVsGuile.state"
     DHALSIM = "dhalsim"
-    HONDA = "honda"
+    HONDA = "Champion.Level1.HondaVsChunLi.state"
     GUILE = "Guile"
-    KEN = "Champion.Level1.KenVsHonda.state"
+    KEN = "Champion.Level1.KenVsRyu.state"
     RYU = "Champion.Level1.RyuVsGuile.state"
     ZANGIEF = "zangief"
     BALROG = "balrog"
@@ -37,7 +36,10 @@ class TrainingArena(Arena):
         self.player = player
     
     def __enter__(self):
-        self.env = create_environment(str(STATES_DIR / self.mode.value))
+        if self.mode == None:
+            self.env = create_environment()
+        else:
+            self.env = create_environment(str(STATES_DIR / self.mode.value))
         self.reset()
         return self
 

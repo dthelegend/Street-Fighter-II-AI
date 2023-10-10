@@ -8,7 +8,7 @@ class PrioritisedExperienceReplayMemory():
         self.actions = np.zeros(shape=(capacity,), dtype=np.int8)
         self.next_states = np.zeros(shape=(capacity,), dtype=(np.float32, (84, 84, 1)))
         self.rewards = np.zeros(shape=(capacity,), dtype=np.float32)
-        self.dones = np.zeros(shape=(capacity,), dtype=np.bool)
+        self.dones = np.zeros(shape=(capacity,), dtype=bool)
 
         self.alpha_errors = np.zeros(shape=(capacity,), dtype=np.float64)
 

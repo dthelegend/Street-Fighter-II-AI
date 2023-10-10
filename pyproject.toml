@@ -10,14 +10,11 @@ packages = [{include = "street_fighter_ii_ai"}]
 main = "street_fighter_ii_ai.main:main"
 
 [tool.poetry.dependencies]
-python = ">=3.10,<3.12"
+python = ">=3.10,<3.11"
 gymnasium = "^0.28.1"
 cmake = "^3.26.1"
-gym-retro = {git = "https://github.com/MatPoliquin/stable-retro.git"}
-nvidia-cudnn-cu11 = "8.6.0.163"
+stable-retro = "^0.9.1"
 tensorflow = {version = "^2.12.0", extras = ["gpu"]}
-pyopengl = "^3.1.6"
-pyopengl-accelerate = "^3.1.6"
 
 [build-system]
 requires = ["poetry-core"]
